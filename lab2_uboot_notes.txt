@@ -1,0 +1,96 @@
+Exercice 1
+==========
+
+ - Move of bl1.bin : System does not boot, no print out on serial console.
+ - Move of bl2.bin : "
+ - Move of u-boot : System does not boot, no print out on serial console, but fan in running.
+ - Move of tzwf: "
+ - Move of uImage: The u-boot can not find the kernel:
+
+	U-Boot 2012.07 (Sep 16 2015 - 10:15:20) for Exynos5422
+
+	CPU: Exynos5422 Rev0.1 [Samsung SOC on SMP Platform Base on ARM CortexA7]
+	APLL = 800MHz, KPLL = 800MHz
+	MPLL = 532MHz, BPLL = 825MHz
+
+	Board: HardKernel ODROID
+	DRAM:  2 GiB
+	WARNING: Caches not enabled
+
+	TrustZone Enabled BSP
+	BL1 version: �/��
+	VDD_KFC: 0x44
+	LDO19: 0xf2
+
+	Checking Boot Mode ... SDMMC
+	MMC:   S5P_MSHC2: 0, S5P_MSHC0: 1
+	MMC Device 0: 7.4 GiB
+	MMC Device 1: [ERROR] response error : 00000006 cmd 8
+	[ERROR] response error : 00000006 cmd 55
+	[ERROR] response error : 00000006 cmd 2
+	*** Warning - bad CRC, using default environment
+
+	In:    serial
+	Out:   serial
+	Err:   serial
+	Net:   No ethernet found.
+	Press 'Enter' or 'Space' to stop autoboot:  0 
+
+	MMC read: dev # 0, block # 17647, count 256 ... there are pending interrupts 0x00000001
+	256 blocks read: OK
+
+	MMC read: dev # 0, block # 1263, count 16384 ... 16384 blocks read: OK
+	Wrong Image Format for bootm command
+	ERROR: can't get kernel image!
+	ODROIDXU3> 
+
+ - Move of the "Flatened Device Tree": U-Boot complains that it can not find it :
+
+ U-Boot 2012.07 (Sep 16 2015 - 10:15:20) for Exynos5422
+
+	CPU: Exynos5422 Rev0.1 [Samsung SOC on SMP Platform Base on ARM CortexA7]
+	APLL = 800MHz, KPLL = 800MHz
+	MPLL = 532MHz, BPLL = 825MHz
+
+	Board: HardKernel ODROID
+	DRAM:  2 GiB
+	WARNING: Caches not enabled
+
+	TrustZone Enabled BSP
+	BL1 version: �/�၁
+	VDD_KFC: 0x44
+	LDO19: 0xf2
+
+	Checking Boot Mode ... SDMMC
+	MMC:   S5P_MSHC2: 0, S5P_MSHC0: 1
+	MMC Device 0: 7.4 GiB
+	MMC Device 1: [ERROR] response error : 00000006 cmd 8
+	[ERROR] response error : 00000006 cmd 55
+	[ERROR] response error : 00000006 cmd 2
+	*** Warning - bad CRC, using default environment
+
+	In:    serial
+	Out:   serial
+	Err:   serial
+	Net:   No ethernet found.
+	Press 'Enter' or 'Space' to stop autoboot:  0 
+
+	MMC read: dev # 0, block # 17647, count 256 ... there are pending interrupts 0x00000001
+	256 blocks read: OK
+
+	MMC read: dev # 0, block # 1263, count 16384 ... 16384 blocks read: OK
+	## Booting kernel from Legacy Image at 40007000 ...
+	   Image Name:   Linux-3.10.63
+	   Image Type:   ARM Linux Kernel Image (uncompressed)
+	   Data Size:    3282576 Bytes = 3.1 MiB
+	   Load Address: 40008000
+	   Entry Point:  40008000
+	   Verifying Checksum ... OK
+	ERROR: Did not find a cmdline Flattened Device Tree
+	Could not find a valid device tree
+	ODROIDXU3> 
+
+
+
+
+

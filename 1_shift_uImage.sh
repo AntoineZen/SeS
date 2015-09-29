@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# This script install the system on the SDCard, but with all items shifted from one sector.
+# This is to check what appends when u-the kernel immage is shifted. bl1, bl2, u-boot and the
+# "TrustZone" are at the correct address.
+# All other after bl2 are shifted also not to overlap.
+
 TARGET_VOLUME=sdb
 IMAGEDIR="/home/antoine/workspace/xu3/buildroot/output/images"
 
@@ -20,6 +25,9 @@ sudo dd if=/dev/zero of=/dev/${TARGET_VOLUME} bs=4k count=16384
 sync
 echo "First sector: msdos"
 sudo parted /dev/${TARGET_VOLUME} mklabel msdos
+
+
+
 # Create the 1st partition (rootfs), start 64MB, length 256MB
 sudo parted /dev/${TARGET_VOLUME} mkpart primary ext4 131072s 655359s
 # Create the 2sd partition (usrfs), start 320MB, length 256MB
@@ -61,10 +69,10 @@ sudo dd if=${IMAGEDIR}/xu3-tzsw.bin of=/dev/${TARGET_VOLUME} bs=512 seek=719
 
 #copy kernel & flattened device tree
 echo "Copy kernel"
-sudo dd if=${IMAGEDIR}/uImage of=/dev/${TARGET_VOLUME} bs=512 seek=1263
+sudo dd if=${IMAGEDIR}/uImage of=/dev/${TARGET_VOLUME} bs=512 seek=1264
 
 echo "copy device tree"
-sudo dd if=${IMAGEDIR}/exynos5422-odroidxu3.dtb of=/dev/${TARGET_VOLUME} bs=512 seek=17647
+sudo dd if=${IMAGEDIR}/exynos5422-odroidxu3.dtb of=/dev/${TARGET_VOLUME} bs=512 seek=17648
 
 #copy rootfs
 echo "Copy rootfs"
