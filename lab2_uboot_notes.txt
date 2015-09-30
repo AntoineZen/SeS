@@ -148,7 +148,10 @@ Then U-Boot show the following error:
 	ERROR: can't get kernel image!
 
 
-	
+Question 3
+==========
+
+
 		
 
 
