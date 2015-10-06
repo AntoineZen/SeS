@@ -152,7 +152,38 @@ Question 3
 ==========
 
 
+To archive this, modifiy lines 509 of file "~/workspace/xu3/buildroot/output/build/uboot-eiafr-3/includes/configs/odroid.h"
+
+	"mmcboot="							\
+		"run addttyargs addmmcargs addipargs; "			\
+		"ext2load mmc 0:1 ${fdts_addr} exynos5422-odroidxu3.dtb; "		\
+		"ext2load mmc 0:1 ${kernel_addr} uImage; "		\
+		"bootm ${kernel_addr} - ${fdts_addr}\0"	
+
+and line 494:495 (to tell that the rootfs is now second partition) :
+
+	"addmmcargs=setenv bootargs ${bootargs} "			\
+		"root=/dev/mmcblk0p2 rw rootwait rootfstype=ext4\0"	\
+
 		
+
+
+
+Then in "~/workspace/xu3/buildroot/output/build/uboot-eiafr-3/" do: 
+
+	export ARCH=arm
+	export CROSS_COMPILE=arm-linux-gnueabihf-
+	export PATH=$PATH:~/workspace/xu3/buildroot/output/host/opt/ext-toolchain/bin
+	make mrproper
+	make odroid_config
+	make
+	cp u-boot.bin ../../images
+
+Then we can use the script make on question 2 to build the SD-Card image.
+
+
+Question 4
+==========
 
 
 
