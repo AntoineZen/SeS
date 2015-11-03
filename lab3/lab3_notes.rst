@@ -133,6 +133,10 @@ Just copy all rtwifi firmeare from the host PC to the uSD card:
 
 	sudo cp -r /lib/firmware/rtlwifi /media/antoine/e3409f1a-2196-4d11-97c8-36c81d0fd6af/lib/firmware/
 
+We can then install The kernel module::
+
+	TODO
+
 4)
 
 Config files for WiFi.
@@ -210,4 +214,3 @@ And this time, we get an IP addrress:
 	adding dns 192.168.1.1
 
 
-	
