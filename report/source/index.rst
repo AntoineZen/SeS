@@ -13,12 +13,16 @@ Contents:
    lab1_notes
    lab2_uboot_notes
    lab3_notes
+   lab4_notes
+   lab5_notes
    annexes
 	
 
 .. include:: lab1_notes.rst
 .. include:: lab2_uboot_notes.rst
 .. include:: lab3_notes.rst
+.. include:: lab4_notes.rst
+.. include:: lab5_notes.rst
 .. include:: annexes.rst
 
 
