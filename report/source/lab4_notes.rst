@@ -94,7 +94,9 @@ This reports two error:
  - An invalid read, it means an array has been exceeded at line 163.
  - A memory leak, from the memory allocated at line 109. 
  
-The loop surrounding line 163 is going one pixel to far. So we should correct the line 161 to::
+The loop surrounding line 163 is going one pixel to far. So we should correct the line 161 to:
+
+.. code-block:: c
 
     for (j=0; j<(widthLoop+1); j=j+1, hiddenText.p_rgb++)
     {
@@ -183,6 +185,8 @@ The *sgcheck* show no error on the program::
 
 3) massif
 ^^^^^^^^^
+
+.. code-**block:: shell
 
     $ valgrind --tool=massif --time-unit=B ./bitmap
     ==7499== Massif, a heap profiler

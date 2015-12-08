@@ -15,6 +15,7 @@ Contents:
    lab3_notes
    lab4_notes
    lab5_notes
+   lab6_filesystems_notes
    annexes
 	
 
@@ -23,6 +24,7 @@ Contents:
 .. include:: lab3_notes.rst
 .. include:: lab4_notes.rst
 .. include:: lab5_notes.rst
+.. include:: lab6_filesystems_notes.rst
 .. include:: annexes.rst
 
 

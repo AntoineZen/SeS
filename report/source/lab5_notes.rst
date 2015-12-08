@@ -199,7 +199,7 @@ So for the lab, we need the following options:
     
 We can now configure & build the package::
 
-    $ ./configure --without-openssl --without-ssh1 --with-pie --refix=/home/antoine/master/Ses/lab5/ssh-install
+    $ ./configure --without-openssl --without-ssh1 --with-pie --prefix=/home/antoine/master/Ses/lab5/ssh-install
     $ make 
     $ sudo make install
     
@@ -251,8 +251,113 @@ We can see that the following was installed in `/home/antoine/master/Ses/lab5/ss
         
         9 directories, 32 files
 
-    
+We can delete this tree as we don't need it. We will recompile it, but for the ARM processor.
     
 Question 3: Configure for the odroid
 ------------------------------------
 
+
+We try now to cross-compile for the odroid. We need to specify the gcc compiler to use by specifying the host prefix. Before this, we need to put the cross-compiler on the PATH, so that the ``configure`` script is able to find it::
+    
+    $ export PATH=/home/antoine/workspace/xu3/buildroot/output/host/usr/bin:$PATH
+    $ ./configure --without-openssl --without-ssh1 --with-pie --prefix=/home/antoine/master/Ses/lab5/ssh-install --host=arm-linux-gnueabihf
+    
+    $ make
+    $ make install
+    
+The last step (``make install``) will fail as it don't use the right strip utility. To correct this, we need to edit the ``Makefile`` to tell it to use the right utility, as we need the ARM version of it. So we need to change line 35 in the ``Makefile`` ::
+
+    STRIP_OPT=-s --strip-program=arm-linux-gnueabihf-strip
+    
+We can then redo the install ::
+
+    $ make install
+
+Despite the error, we have the same tree installed::
+    
+    antoine@antoine-vb-64:~/master/Ses/lab5/ssh-install$ tree
+    .
+    ├── bin
+    │   ├── scp
+    │   ├── sftp
+    │   ├── slogin -> ./ssh
+    │   ├── ssh
+    │   ├── ssh-add
+    │   ├── ssh-agent
+    │   ├── ssh-keygen
+    │   └── ssh-keyscan
+    ├── etc
+    │   ├── moduli
+    │   ├── ssh_config
+    │   └── sshd_config
+    ├── libexec
+    │   ├── sftp-server
+    │   ├── ssh-keysign
+    │   └── ssh-pkcs11-helper
+    ├── sbin
+    │   └── sshd
+    └── share
+        └── man
+            ├── man1
+            │   ├── scp.1
+            │   ├── sftp.1
+            │   ├── slogin.1 -> ./ssh.1
+            │   ├── ssh.1
+            │   ├── ssh-add.1
+            │   ├── ssh-agent.1
+            │   ├── ssh-keygen.1
+            │   └── ssh-keyscan.1
+            ├── man5
+            │   ├── moduli.5
+            │   ├── ssh_config.5
+            │   └── sshd_config.5
+            └── man8
+                ├── sftp-server.8
+                ├── sshd.8
+                ├── ssh-keysign.8
+                └── ssh-pkcs11-helper.8
+    
+    9 directories, 30 files
+
+
+We can see that we have an executable for the ARM machine::
+
+    antoine@antoine-vb-64:~/master/Ses/lab5/ssh-install$ file sbin/sshd 
+    sbin/sshd: ELF 32-bit LSB  shared object, ARM, EABI5 version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 3.1.1, BuildID[sha1]=a220decacaf8a2d54a8c26802898a631964103b4, stripped
+    
+    
+Question 4: Install on the Odroid
+---------------------------------
+
+
+We can copy the installation to the root fs::
+
+    $ sudo cp -r * /media/antoine/rootfs/
+    
+    
+Question 5: Configure ssh
+-------------------------
+
+We need to add the following options to ``/etc/sshd_config`` :: 
+
+    # Force use of IPv4 only
+    Port 22
+    ListenAddress 0.0.0.0
+    
+    # Force use of protocol version 2
+    Protocol 2
+    
+    # Disable port forwarding
+    AllowTcpForwarding no
+    
+    # Select the allowed cyphers
+    Ciphers aes256-cbc, aes256-ctr, aes128-cbc, blowfish-cbc, 3des-cbc, hmac-sha256, hmac-sha1
+    
+    # Enable privilege separation
+    UsePrivilegeSeparation yes
+    
+    # Don't allow root to login
+    PermitRootLogin no
+    
+    # Give a banner file
+    Banner /etc/sshd_banner
