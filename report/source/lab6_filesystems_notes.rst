@@ -79,7 +79,9 @@ To have it mounted at startup, we modify the ``/etc/fstab`` as following (last l
     tmpfs           /dev/shm       tmpfs    mode=0777         0      0      
     tmpfs           /tmp           tmpfs    mode=1777         0      0      
     sysfs           /sys           sysfs    defaults          0      0      
-    /dev/mmcblk0p3  /mnt/usrfs     ext4     defaults,noatime,nodiratime,datawriteback,acl,user_xattr 0 0
+    /dev/mmcblk0p3  /mnt/usrfs     ext4     defaults,noatime,discard,nodiratime,data=writeback,acl,user_xattr 0 0
+    
+The file in ``buildroot/system/skeleton/etc`` could be modified as well to have those modifications persisting when making a new root file system.
     
 We also need to create the mounting point directory::
 
@@ -109,19 +111,217 @@ Question 3: EXT4 journaling
 
 We are asked to check the write & read performances on a small and a big file with journaling enabled or disabled. 
 
-To write those files, we can use the ``dd`` command:
+To write those files, two small C program have been made. The first one writes a small file (it write 4 block of 2014 bytes = 4kBytes)::
 
-    # To write a big files (100MB)
-    dd if=/dev/zero of=test_file bs=1M count=100
-    # To write a small file(5120kB)
-    dd if=/dev/zero of=test_file bs=1k count=512    
+    #include <stdio.h>
+    #include <string.h>
+    #include <stdlib.h>
     
-We can then use the ``time``command to measure the time it take. 
+    #define BLOCK_SIZE 1024
+    
+    main(int argc, char *argv[])
+    {
+        void* ptr;
+        FILE* f = fopen("generated_file", "w");
+        int i;
+    
+        for(i=0; i < 4; i++)
+        {
+            ptr = malloc(BLOCK_SIZE);
+            memset(ptr, 0xAA, BLOCK_SIZE);
+    
+            fwrite(ptr, BLOCK_SIZE, 1, f);
+    
+            free(ptr);
+        }
+    
+        fclose(f);
+    }
+
+And the one that writes a big file (it writes 40 block of 1Mbytes = 40Mbytes)::
+
+
+    #include <stdio.h>
+    #include <string.h>
+    #include <stdlib.h>
+    
+    #define BLOCK_SIZE (1024*1024)
+    
+    main(int argc, char *argv[])
+    {
+        void* ptr;
+        FILE* f = fopen("generated_file", "w");
+        int i;
+    
+        for(i=0; i < 40; i++)
+        {
+            ptr = malloc(BLOCK_SIZE);
+            memset(ptr, 0xAA, BLOCK_SIZE);
+    
+            fwrite(ptr, BLOCK_SIZE, 1, f);
+    
+            free(ptr);
+        }
+    
+        fclose(f);
+    }
+
+
+We can then use the ``time``command to measure the time it take to run both programs::
+
+    # time ./big_write
+    Command exited with non-zero status 1
+    real    0m 0.89s
+    user    0m 0.01s
+    sys     0m 0.88s
+    # time ./small_write 
+    Command exited with non-zero status 1
+    real    0m 0.09s
+    user    0m 0.00s
+    sys     0m 0.09s
+
 
 We can then disable the EXT4 journaling and measure the time for a big and small file::
 
+    # cd
+    # umount /mnt/usrfs/
     # tune2fs -O ^has_journal /dev/mmcblk0p3
+    tune2fs 1.42.12 (29-Aug-2014)
+    # mount /mnt/usrfs/
+    [  844.419881] [c6] EXT4-fs (mmcblk0p3): mounting with "discard" option, but the device does not support discard
+    [  844.428370] [c6] EXT4-fs (mmcblk0p3): mounted filesystem without journal. Opts: discard,data=writeback,acl,user_xattr
+    
+    
+We can then repeat the measure::
 
+    # time ./big_write
+    Command exited with non-zero status 1
+    real    0m 0.86s
+    user    0m 0.00s
+    sys     0m 0.73s
+    # time ./small_write 
+    Command exited with non-zero status 1
+    real    0m 0.08s
+    user    0m 0.00s
+    sys     0m 0.08s
+
+
+We can see that haveing the journaling disabled reduced the execution time of 30ms and 10ms.
+
+
+
+
+Question 4: SQUASHFS
+--------------------
+    
+We can prepare some data to make the SQUASHFS partition::
+
+    # cd /mnt/usrfs
+    # mkdir sqfs
+    # cp -r /usr/* sqfs
+    
+    
+Then we can create SQUASHFS files with different compressions::
+
+    # mksquashfs sqfs/ part.gzip.sqsh -comp gzip
+    # mksquashfs sqfs/ part.lz4.sqsh -comp lz4
+    # mksquashfs sqfs/ part.lzma.sqsh -comp lzma
+    # mksquashfs sqfs/ part.lzo.sqsh -comp lzo
+    # mksquashfs sqfs/ part.xz.sqsh -comp xz
+    
+
+We can then compare the size of the files created with the various compressions algorithms::
+
+    # ls -lh *.sqsh
+    -rw-r--r--    1 root     root        7.0M Jan  1 00:06 part.gzip.sqsh
+    -rw-r--r--    1 root     root       10.4M Jan  1 00:07 part.lz4.sqsh
+    -rw-r--r--    1 root     root        5.6M Jan  1 00:06 part.lzma.sqsh
+    -rw-r--r--    1 root     root        7.7M Jan  1 00:07 part.lzo.sqsh
+    -rw-r--r--    1 root     root        5.6M Jan  1 00:08 part.xz.sqsh
+    
+    
+This shows that **lzma** and **xz** algorithms offers the smallest sizes.
+
+
+We can then mount any of those partion to the ``/mnt/sqfs`` mounting point (we need to create it first)::
+
+    # cd /mnt
+    # mkdir sqfs
+    # mount -t squashfs -o loop /mnt/usrfs/part.gzip.sqsh /mnt/sqfs
+    mount: mounting  on /mnt/sqfs failed: No such device
+
+Note that the support for SQUASHFS must first be enabled in the kernel. In our case it was needed to re-compile a kernel with this support enable. We use ``make xconfig`` then searched for *SquashFS* and selected it. Then a simple ``make `` build the new kernel that should then flashed to the MMC card (or copied in the boot partition). 
+
+**But still, I was not able to mount the partition using loopback on the odroid**
+
+
+Question 4: SQUASHFS partition
+------------------------------
+
+On the pc, we can create a new partition on the eMMC card. This parition will start at 16MB (bootloader) + 64MB (bootfs) + 256MB (rootfs) + 256MB (usrfs) = 592MB.  This represent 1212416 sectors of 512 bytes. It will end at 848MB = sector 1736703. So now that we know the offset, we can create the partition::
+
+    antoine@antoine-vb-64:~$ sudo parted /dev/sdb mkpart primary 1212416s 1736703s
+    Information: You may need to update /etc/fstab.                           
+    
+    antoine@antoine-vb-64:~$ sudo fdisk -l /dev/sdb
+    
+    Disk /dev/sdb: 7948 MB, 7948206080 bytes
+    245 heads, 62 sectors/track, 1021 cylinders, total 15523840 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 512 bytes
+    I/O size (minimum/optimal): 512 bytes / 512 bytes
+    Disk identifier: 0x000f2984
+    
+       Device Boot      Start         End      Blocks   Id  System
+    /dev/sdb1           32768      163839       65536   83  Linux
+    /dev/sdb2          163840      688127      262144   83  Linux
+    /dev/sdb3          688128     1212415      262144   83  Linux
+    /dev/sdb4         1212416     1736703      262144   83  Linux
+
+We can the copy one squashfs file to the freshly created partition::
+
+    antoine@antoine-vb-64:~$ sudo dd if=/media/antoine/usrfs/part.gzip.sqsh of=/dev/sdb4
+    14424+0 records in
+    14424+0 records out
+    7385088 bytes (7.4 MB) copied, 7.5977 s, 972 kB/s
+
+We can then mount it and check that it is really read-only::
+
+    antoine@antoine-vb-64:~$ mkdir /mnt/sqfs
+    antoine@antoine-vb-64:~$ sudo mount -t squashfs /dev/sdb4 /mnt/sqfs
+    mount: warning: /mnt/sqfs seems to be mounted read-only.
+    
+    antoine@antoine-vb-64:/mnt/sqfs/bin$ mount | grep sdb4
+    /dev/sdb4 on /mnt/sqfs type squashfs (ro)
+
+    antoine@antoine-vb-64:~$ cd /mnt/sqfs/bin
+    antoine@antoine-vb-64:/mnt/sqfs/bin$ ls
+    [          dirname    killall  lzless      pkill        slabtop           top         wget
+    [[         dos2unix   last     lzma        pmap         slogin            tr          which
+    ar         du         less     lzmadec     printf       sort              traceroute  who
+    awk        eject      logger   lzmainfo    pwdx         ssh               tty         whoami
+    basename   env        logname  lzmore      readlink     ssh-add           uniq        xargs
+    bunzip2    expr       lsattr   md5sum      realpath     ssh-agent         unix2dos    xz
+    bzcat      find       lsof     mesg        renice       ssh-keygen        unlzma      xzcat
+    chattr     fold       lspci    microcom    reset        ssh-keyscan       unsquashfs  xzcmp
+    chrt       free       lsusb    mkfifo      resize       strace            unxz        xzdec
+    chvt       fuser      lz4      mksquashfs  scp          strace-log-merge  unzip       xzdiff
+    cksum      gdbserver  lz4c     nohup       seq          strings           uptime      xzegrep
+    clear      head       lz4cat   nslookup    setkeycodes  tail              uudecode    xzfgrep
+    cmp        hexdump    lzcat    od          setsid       tee               uuencode    xzgrep
+    crontab    hostid     lzcmp    openvt      sftp         telnet            vlock       xzless
+    cut        id         lzdiff   passwd      sha1sum      test              vmstat      xzmore
+    dc         install    lzegrep  patch       sha256sum    tftp              w           yes
+    deallocvt  ipcrm      lzfgrep  pgrep       sha3sum      time              watch
+    diff       ipcs       lzgrep   pidof       sha512sum    tload             wc
+    
+    
+    antoine@antoine-vb-64:/mnt/sqfs/bin$ rm watch 
+    rm: cannot remove ‘watch’: Read-only file system
+
+
+The file cannot be removed, this prof that the file system is read-only.
+    
 
 
 
