@@ -1,6 +1,7 @@
-Lab 5: Install last version of OpenSSH
+Lab 5: Hardening Linux
 ======================================
 
+This lab is about installing the latest version of OpenSSH with the correct options to ensure maximum security. We also check that the source package is issued by the right developer to avoid installing untrusted software.
 
 Question 1 : Check the signature of OpenSSH source package
 ----------------------------------------------------------
@@ -203,53 +204,9 @@ We can now configure & build the package::
     $ make 
     $ sudo make install
     
-We can see that the following was installed in `/home/antoine/master/Ses/lab5/ssh-install``::
+We can see that the following was installed in `/home/antoine/master/Ses/lab5/ssh-install``:
 
-    antoine@antoine-vb-64:~/master/Ses/lab5/ssh-install$ tree
-        .
-        ├── bin
-        │   ├── scp
-        │   ├── sftp
-        │   ├── slogin -> ./ssh
-        │   ├── ssh
-        │   ├── ssh-add
-        │   ├── ssh-agent
-        │   ├── ssh-keygen
-        │   └── ssh-keyscan
-        ├── etc
-        │   ├── moduli
-        │   ├── ssh_config
-        │   ├── sshd_config
-        │   ├── ssh_host_ed25519_key
-        │   └── ssh_host_ed25519_key.pub
-        ├── libexec
-        │   ├── sftp-server
-        │   ├── ssh-keysign
-        │   └── ssh-pkcs11-helper
-        ├── sbin
-        │   └── sshd
-        └── share
-            └── man
-                ├── man1
-                │   ├── scp.1
-                │   ├── sftp.1
-                │   ├── slogin.1 -> ./ssh.1
-                │   ├── ssh.1
-                │   ├── ssh-add.1
-                │   ├── ssh-agent.1
-                │   ├── ssh-keygen.1
-                │   └── ssh-keyscan.1
-                ├── man5
-                │   ├── moduli.5
-                │   ├── ssh_config.5
-                │   └── sshd_config.5
-                └── man8
-                    ├── sftp-server.8
-                    ├── sshd.8
-                    ├── ssh-keysign.8
-                    └── ssh-pkcs11-helper.8
-        
-        9 directories, 32 files
+    .. image:: ../../lab5/ssh_tree_1.png
 
 We can delete this tree as we don't need it. We will recompile it, but for the ARM processor.
     
@@ -273,51 +230,9 @@ We can then redo the install ::
 
     $ make install
 
-Despite the error, we have the same tree installed::
+Despite the error, we have the same tree installed:
     
-    antoine@antoine-vb-64:~/master/Ses/lab5/ssh-install$ tree
-    .
-    ├── bin
-    │   ├── scp
-    │   ├── sftp
-    │   ├── slogin -> ./ssh
-    │   ├── ssh
-    │   ├── ssh-add
-    │   ├── ssh-agent
-    │   ├── ssh-keygen
-    │   └── ssh-keyscan
-    ├── etc
-    │   ├── moduli
-    │   ├── ssh_config
-    │   └── sshd_config
-    ├── libexec
-    │   ├── sftp-server
-    │   ├── ssh-keysign
-    │   └── ssh-pkcs11-helper
-    ├── sbin
-    │   └── sshd
-    └── share
-        └── man
-            ├── man1
-            │   ├── scp.1
-            │   ├── sftp.1
-            │   ├── slogin.1 -> ./ssh.1
-            │   ├── ssh.1
-            │   ├── ssh-add.1
-            │   ├── ssh-agent.1
-            │   ├── ssh-keygen.1
-            │   └── ssh-keyscan.1
-            ├── man5
-            │   ├── moduli.5
-            │   ├── ssh_config.5
-            │   └── sshd_config.5
-            └── man8
-                ├── sftp-server.8
-                ├── sshd.8
-                ├── ssh-keysign.8
-                └── ssh-pkcs11-helper.8
-    
-    9 directories, 30 files
+    .. image:: ../../lab5/ssh_tree_2.png
 
 
 We can see that we have an executable for the ARM machine::
