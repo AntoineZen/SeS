@@ -1,0 +1,616 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Lab 2: U-Boot &mdash; SeS 10.11.2015 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="SeS 10.11.2015 documentation" href="index.html"/>
+        <link rel="next" title="Lab 3: Kernel configuration" href="lab3_notes.html"/>
+        <link rel="prev" title="Lab 1: Odoid Buildroot installation" href="lab1_notes.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SeS
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="lab1_notes.html">Lab 1: Odoid Buildroot installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Lab 2: U-Boot</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#question-1-check-different-mapping">Question 1: Check different mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#question-2-verify-the-kernel-s-checksum">Question 2: Verify the kernel&#8217;s checksum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#question-3-change-the-mapping">Question 3: Change The mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#question-4-change-network-initialization">Question 4 : Change network initialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#modify-the-u-boot-configuration-in-order-u-boot-dont-initialize-the-network">1) Modify the u-boot configuration in order u-boot don’t initialize the network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#modify-etc-network-interfaces">2) Modify &#8220;/etc/network/interfaces&#8221;</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#place-the-new-configuration-file-in-the-root-fs">3) Place the new configuration file in the root-fs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-new-software-to-the-root-fs">4) Add new software to the root-fs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-the-new-root-fs-and-install-it-on-the-emmc">5) Generate the new root-fs and install it on the eMMC</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#question-5-add-stack-protection-to-u-boot">Question 5: Add stack protection to u-boot.</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#modify-u-boot-s-compilation-option-in-order-to-improve-the-code-security">1) Modify u-boot&#8217;s compilation option in order to improve the code security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#write-a-small-program-on-the-pc-to-test-the-stack-protection">2) Write a small program on the PC to test the stack protection</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lab3_notes.html">Lab 3: Kernel configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab4_notes.html">Lab 3: Valgrind</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab5_notes.html">Lab 5: Install last version of OpenSSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab6_filesystems_notes.html">Lab 6: File Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexes.html">Annexes</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">SeS</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Lab 2: U-Boot</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/lab2_uboot_notes.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="lab-2-u-boot">
+<h1>Lab 2: U-Boot<a class="headerlink" href="#lab-2-u-boot" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="question-1-check-different-mapping">
+<h2>Question 1: Check different mapping<a class="headerlink" href="#question-1-check-different-mapping" title="Permalink to this headline">¶</a></h2>
+<p>In this question, we check what appends if we move the different parts that are copied to the
+eMMC card that is used as boot media.
+For each configuration, a script has been written to test the case. Each script is a modified version of
+the original installation script. Please find them in annexe to this documents.</p>
+<p>Here after are the result when we move the different parts:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Move of bl1.bin (see <em>1_shift_bl1.sh</em>): System does not boot, no print out on serial console.</p>
+</li>
+<li><p class="first">Move of bl2.bin (see <em>1_shift_bl2.sh</em>): Same Result.</p>
+</li>
+<li><p class="first">Move of u-boot (see <em>1_shift_u-boot.sh</em>): System does not boot, no print out on serial console, but fan in running.</p>
+</li>
+<li><p class="first">Move of tzwf (see <em>1_shift_tzws.sh</em>): Same Result.</p>
+</li>
+<li><p class="first">Move of uImage (see <em>1_shift_uImage.sh</em>): The u-boot can not find the kernel:</p>
+<div class="highlight-python"><div class="highlight"><pre>U-Boot 2012.07 (Sep 16 2015 - 10:15:20) for Exynos5422
+
+CPU: Exynos5422 Rev0.1 [Samsung SOC on SMP Platform Base on ARM CortexA7]
+APLL = 800MHz, KPLL = 800MHz
+MPLL = 532MHz, BPLL = 825MHz
+
+Board: HardKernel ODROID
+DRAM:  2 GiB
+WARNING: Caches not enabled
+
+TrustZone Enabled BSP
+BL1 version:
+VDD_KFC: 0x44
+LDO19: 0xf2
+
+Checking Boot Mode ... SDMMC
+MMC:   S5P_MSHC2: 0, S5P_MSHC0: 1
+MMC Device 0: 7.4 GiB
+MMC Device 1: [ERROR] response error : 00000006 cmd 8
+[ERROR] response error : 00000006 cmd 55
+[ERROR] response error : 00000006 cmd 2
+*** Warning - bad CRC, using default environment
+
+In:    serial
+Out:   serial
+Err:   serial
+Net:   No ethernet found.
+Press &#39;Enter&#39; or &#39;Space&#39; to stop autoboot:  0
+
+MMC read: dev # 0, block # 17647, count 256 ... there are pending interrupts 0x00000001
+256 blocks read: OK
+
+MMC read: dev # 0, block # 1263, count 16384 ... 16384 blocks read: OK
+Wrong Image Format for bootm command
+ERROR: can&#39;t get kernel image!
+ODROIDXU3&gt;
+</pre></div>
+</div>
+</li>
+<li><p class="first">Move of the &#8220;Flattened Device Tree&#8221; (see <em>1_shift_device_tree.sh</em>): U-Boot complains that it can not find it:</p>
+<div class="highlight-python"><div class="highlight"><pre>U-Boot 2012.07 (Sep 16 2015 - 10:15:20) for Exynos5422
+
+CPU: Exynos5422 Rev0.1 [Samsung SOC on SMP Platform Base on ARM CortexA7]
+APLL = 800MHz, KPLL = 800MHz
+MPLL = 532MHz, BPLL = 825MHz
+
+Board: HardKernel ODROID
+DRAM:  2 GiB
+WARNING: Caches not enabled
+
+TrustZone Enabled BSP
+BL1 version:
+VDD_KFC: 0x44
+LDO19: 0xf2
+
+Checking Boot Mode ... SDMMC
+MMC:   S5P_MSHC2: 0, S5P_MSHC0: 1
+MMC Device 0: 7.4 GiB
+MMC Device 1: [ERROR] response error : 00000006 cmd 8
+[ERROR] response error : 00000006 cmd 55
+[ERROR] response error : 00000006 cmd 2
+*** Warning - bad CRC, using default environment
+
+In:    serial
+Out:   serial
+Err:   serial
+Net:   No ethernet found.
+Press &#39;Enter&#39; or &#39;Space&#39; to stop autoboot:  0
+
+MMC read: dev # 0, block # 17647, count 256 ... there are pending interrupts 0x00000001
+256 blocks read: OK
+
+MMC read: dev # 0, block # 1263, count 16384 ... 16384 blocks read: OK
+## Booting kernel from Legacy Image at 40007000 ...
+   Image Name:   Linux-3.10.63
+   Image Type:   ARM Linux Kernel Image (uncompressed)
+   Data Size:    3282576 Bytes = 3.1 MiB
+   Load Address: 40008000
+   Entry Point:  40008000
+   Verifying Checksum ... OK
+ERROR: Did not find a cmdline Flattened Device Tree
+Could not find a valid device tree
+ODROIDXU3&gt;
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="question-2-verify-the-kernel-s-checksum">
+<h2>Question 2: Verify the kernel&#8217;s checksum<a class="headerlink" href="#question-2-verify-the-kernel-s-checksum" title="Permalink to this headline">¶</a></h2>
+<p>In this question, we modify a byte inside the kernel compiled image. The goal
+of this, is to check wetter or not <em>U-Boot</em> is able to detect it. If, it detect the
+error, it should not boot the image.</p>
+<p>Using the following command, we can modify the kernel image:</p>
+<div class="highlight-python"><div class="highlight"><pre>    $ cd ~/workspace/xu3/buildroot/output/images
+    $ cp uImage uImage.orig
+$ hexedit uImage
+#   &lt;modify some byte&gt; Ctrl+x
+    $ cd ~/master/SeS
+    ./0_base_sd_install.sh
+</pre></div>
+</div>
+<p>Then U-Boot show the following error:</p>
+<div class="highlight-python"><div class="highlight"><pre>U-Boot 2012.07 (Sep 16 2015 - 10:15:20) for Exynos5422
+
+CPU: Exynos5422 Rev0.1 [Samsung SOC on SMP Platform Base on ARM CortexA7]
+APLL = 800MHz, KPLL = 800MHz
+MPLL = 532MHz, BPLL = 825MHz
+
+Board: HardKernel ODROID
+DRAM:  2 GiB
+WARNING: Caches not enabled
+
+TrustZone Enabled BSP
+BL1 version:
+VDD_KFC: 0x44
+LDO19: 0xf2
+
+Checking Boot Mode ... SDMMC
+MMC:   S5P_MSHC2: 0, S5P_MSHC0: 1
+MMC Device 0: 7.4 GiB
+MMC Device 1: [ERROR] response error : 00000006 cmd 8
+[ERROR] response error : 00000006 cmd 55
+[ERROR] response error : 00000006 cmd 2
+*** Warning - bad CRC, using default environment
+
+In:    serial
+Out:   serial
+Err:   serial
+Net:   No ethernet found.
+Press &#39;Enter&#39; or &#39;Space&#39; to stop autoboot:  0
+
+MMC read: dev # 0, block # 17647, count 256 ... there are pending interrupts 0x00000001
+256 blocks read: OK
+
+MMC read: dev # 0, block # 1263, count 16384 ... 16384 blocks read: OK
+## Booting kernel from Legacy Image at 40007000 ...
+   Image Name:   Linux-3.10.63
+   Image Type:   ARM Linux Kernel Image (uncompressed)
+   Data Size:    3282576 Bytes = 3.1 MiB
+   Load Address: 40008000
+   Entry Point:  40008000
+   Verifying Checksum ... Bad Data CRC
+ERROR: can&#39;t get kernel image!
+</pre></div>
+</div>
+</div>
+<div class="section" id="question-3-change-the-mapping">
+<h2>Question 3: Change The mapping<a class="headerlink" href="#question-3-change-the-mapping" title="Permalink to this headline">¶</a></h2>
+<p>The goal of this question is to change the Image mapping of the eMMC card. We will now
+have the kernel and the &#8220;Flattened device tree&#8221; in a partition instead having them in
+the raw space before the root file-system.</p>
+<p>To archive this, modifiy lines 509:515 of file <code class="docutils literal"><span class="pre">~/workspace/xu3/buildroot/output/build/uboot-eiafr-3/includes/configs/odroid.h</span></code></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="s">&quot;mmcboot=&quot;</span>                                                      \
+        <span class="s">&quot;run addttyargs addmmcargs addipargs; &quot;</span>                 \
+        <span class="s">&quot;ext2load mmc 0:1 ${fdts_addr} exynos5422-odroidxu3.dtb; &quot;</span>              \
+        <span class="s">&quot;ext2load mmc 0:1 ${kernel_addr} uImage; &quot;</span>              \
+        <span class="s">&quot;bootm ${kernel_addr} - ${fdts_addr}</span><span class="se">\0</span><span class="s">&quot;</span>
+</pre></div>
+</div>
+<p>and line 494:495 (to tell that the rootfs is now second partition) :</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="s">&quot;addmmcargs=setenv bootargs ${bootargs} &quot;</span>                       \
+        <span class="s">&quot;root=/dev/mmcblk0p2 rw rootwait rootfstype=ext4</span><span class="se">\0</span><span class="s">&quot;</span>     \
+</pre></div>
+</div>
+<p>Then in <code class="docutils literal"><span class="pre">~/workspace/xu3/buildroot/output/build/uboot-eiafr-3/</span></code> do:</p>
+<div class="highlight-python"><div class="highlight"><pre>    $ export ARCH=arm
+    $ export CROSS_COMPILE=arm-linux-gnueabihf-
+    $ export PATH=$PATH:~/workspace/xu3/buildroot/output/host/opt/ext-toolchain/bin
+    $ make mrproper
+    $ make odroid_config
+    $ make
+$ cp u-boot.bin ../../images
+</pre></div>
+</div>
+<p>Then we can use the script made on question 2 to build the eMMC image. The script is given in annexe
+and is called <code class="docutils literal"><span class="pre">3_partition_sd_install.sh</span></code>.</p>
+</div>
+<div class="section" id="question-4-change-network-initialization">
+<h2>Question 4 : Change network initialization<a class="headerlink" href="#question-4-change-network-initialization" title="Permalink to this headline">¶</a></h2>
+<p>When the system boot, there is a timeout of 120s for the network to be ready. This is annoying and
+we want to configure the network from the file-system instead of having it configured on the
+kernel&#8217;s arguments. So we need to do the following actions:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Modify u-boot to not pass IP configuration to the kernel</li>
+<li>Setup a network config file in the root-fs.</li>
+</ul>
+</div></blockquote>
+<div class="section" id="modify-the-u-boot-configuration-in-order-u-boot-dont-initialize-the-network">
+<h3>1) Modify the u-boot configuration in order u-boot don’t initialize the network<a class="headerlink" href="#modify-the-u-boot-configuration-in-order-u-boot-dont-initialize-the-network" title="Permalink to this headline">¶</a></h3>
+<p>First, remove the IP options from the kernel arguments. For this modify again line 509:515 of <code class="docutils literal"><span class="pre">~/workspace/xu3/buildroot/output/build/uboot-eiafr-3/includes/configs/odroid.h</span></code> in this way:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="s">&quot;mmcboot=&quot;</span>                                                      \
+        <span class="s">&quot;run addttyargs addmmcargs; &quot;</span>                           \
+        <span class="s">&quot;ext2load mmc 0:1 ${fdts_addr} exynos5422-odroidxu3.dtb; &quot;</span>              \
+        <span class="s">&quot;ext2load mmc 0:1 ${kernel_addr} uImage; &quot;</span>              \
+        <span class="s">&quot;bootm ${kernel_addr} - ${fdts_addr}</span><span class="se">\0</span><span class="s">&quot;</span>                 \
+<span class="s">&quot;erase_env=mmc erase user 0 0x4cf 0x20</span><span class="se">\0</span><span class="s">&quot;</span>
+</pre></div>
+</div>
+<p>as this header file has been modified, we need to build u-boot again and copy it to the image folder</p>
+<div class="highlight-python"><div class="highlight"><pre>$ make clean
+$ make
+$ cp u-boot.bin ../../images
+</pre></div>
+</div>
+</div>
+<div class="section" id="modify-etc-network-interfaces">
+<h3>2) Modify &#8220;/etc/network/interfaces&#8221;<a class="headerlink" href="#modify-etc-network-interfaces" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">/etc/network/interfaces</span></code> file must look like this:</p>
+<div class="highlight-python"><div class="highlight"><pre># Configure Loop-back
+auto lo
+iface lo inet loopback
+
+# Configure Ethernet port 0
+auto eth0
+iface eth0 inet static
+        address 192.168.0.11
+        netmask 255.255.255.0
+        gateway 192.168.0.4
+</pre></div>
+</div>
+</div>
+<div class="section" id="place-the-new-configuration-file-in-the-root-fs">
+<h3>3) Place the new configuration file in the root-fs<a class="headerlink" href="#place-the-new-configuration-file-in-the-root-fs" title="Permalink to this headline">¶</a></h3>
+<p>We want the <code class="docutils literal"><span class="pre">/etc/network/interface</span></code> to be included with the root-fs image to the correct place.
+So we will add this to <code class="docutils literal"><span class="pre">~/workspace/xu3/buildroot/system/skeleton/etc/network/interfaces</span></code>. Copy this file to the output folder
+to avoid a clean.</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cp ~/workspace/xu3/buildroot/system/skeleton/etc/network/interfaces ~/workspace/xu3/buildroot/output/target/etc/network/
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-new-software-to-the-root-fs">
+<h3>4) Add new software to the root-fs<a class="headerlink" href="#add-new-software-to-the-root-fs" title="Permalink to this headline">¶</a></h3>
+<p>For the next laboratories, we need the following other package:</p>
+<blockquote>
+<div><ul class="simple">
+<li>dhcp server</li>
+<li>dhcp client</li>
+<li>iw</li>
+<li>wpa-supplication</li>
+<li>tune2fs (busybox applet)</li>
+</ul>
+</div></blockquote>
+<p>To add the buildroot package, use &#8220;make menuconfig&#8221; and navigate to &#8220;Target Packages &gt; Networking applications&#8221; and check &#8220;dhcp (ISC)&#8221;, &#8220;dhcp server&#8221;, &#8220;dhcp client&#8221;, &#8220;iw&#8221; and &#8220;wpa-supplicant&#8221;. Save and exit
+To add the &#8220;tune2fs&#8221; busybox command use &#8220;make busybox-menuconfig&#8221;. Naviagate to &#8220;Linux Ext2 FS Progs&#8221; and check &#8220;tune2fs&#8221;. Save and exit.</p>
+</div>
+<div class="section" id="generate-the-new-root-fs-and-install-it-on-the-emmc">
+<h3>5) Generate the new root-fs and install it on the eMMC<a class="headerlink" href="#generate-the-new-root-fs-and-install-it-on-the-emmc" title="Permalink to this headline">¶</a></h3>
+<p>Type &#8220;make&#8221; to update the image. Re install with the script created in Question 2 to write the images to the SD-Card.</p>
+<p>After booting the Odroid, we can check that the commands are present using the &#8220;which&#8221; command:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ which dhcpd
+/usr/sbin/dhcpd
+
+$ which dhclient
+/usr/sbin/dhclient
+
+$ which iw
+/usr/sbin/iw
+
+$ which wpa_supplicant
+/usr/sbin/wpa_supplicant
+
+$ which tune2fs
+/sbin/tunne2fs
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="question-5-add-stack-protection-to-u-boot">
+<h2>Question 5: Add stack protection to u-boot.<a class="headerlink" href="#question-5-add-stack-protection-to-u-boot" title="Permalink to this headline">¶</a></h2>
+<p>In this part, we take advantage of GCC&#8217;s compilation that enables to improve the code security.</p>
+<div class="section" id="modify-u-boot-s-compilation-option-in-order-to-improve-the-code-security">
+<h3>1) Modify u-boot&#8217;s compilation option in order to improve the code security<a class="headerlink" href="#modify-u-boot-s-compilation-option-in-order-to-improve-the-code-security" title="Permalink to this headline">¶</a></h3>
+<p>Modify <code class="docutils literal"><span class="pre">~/workspace/xu3/buildroot/output/build/uboot-eiafr-3/config.mk</span></code> at line 184:192 to the following:</p>
+<div class="highlight-python"><div class="highlight"><pre>DBGFLAGS= -g # -DDEBUG
+OPTFLAGS= -Os  -fstack-protector-all #-fomit-frame-pointer
+
+OBJCFLAGS += --gap-fill=0xff
+
+gccincdir := $(shell $(CC) -print-file-name=include)
+
+CPPFLAGS :=  $(OPTFLAGS) $(RELFLAGS)            \
+        -D__KERNEL__
+</pre></div>
+</div>
+<p>On CPFLAGS, the inclusion of DBGFLAGS has been removed. On OPTFLAGS <code class="docutils literal"><span class="pre">-fstack-protector-all</span></code> has been added.</p>
+<p>To compile the modified u-boot:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ make clean
+$ make
+</pre></div>
+</div>
+<p>We can see that the -g options has been removed and the <code class="docutils literal"><span class="pre">-fstack-protector-all</span></code> has been added on the make output:</p>
+<div class="highlight-python"><div class="highlight"><pre>arm-linux-gnueabihf-gcc  -Os  -fstack-protector-all   -fno-common -ffixed-r8 -mfloat-abi=hard -mfpu=vfpv3  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x43E00000 -DCONFIG_SPL_TEXT_BASE=0x02027000 -I/home/antoine/workspace/xu3/buildroot/output/build/uboot-eiafr-3/include -fno-builtin -ffreestanding -nostdinc -isystem /home/antoine/workspace/xu3/buildroot/output/host/opt/ext-toolchain/bin/../lib/gcc/arm-linux-gnueabihf/4.9.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv7ve -mno-unaligned-access -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage -fno-toplevel-reorder     -o hello_world.o hello_world.c -c
+</pre></div>
+</div>
+<p>after the build, copy the file to the output image folder</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cp u-boot.bin ../../images/
+</pre></div>
+</div>
+<p>we can then rebuild the SD-Card using the script from question 2.</p>
+</div>
+<div class="section" id="write-a-small-program-on-the-pc-to-test-the-stack-protection">
+<h3>2) Write a small program on the PC to test the stack protection<a class="headerlink" href="#write-a-small-program-on-the-pc-to-test-the-stack-protection" title="Permalink to this headline">¶</a></h3>
+<p>The following program was written:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">bad_function</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="c1">// Declare an array of 16 int on the stack.</span>
+    <span class="kt">int</span> <span class="n">some_array</span><span class="p">[</span><span class="mi">16</span><span class="p">];</span>
+
+    <span class="c1">// Overflow the array on the stack</span>
+
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">24</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">some_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">good_function</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="c1">// Declare an array of 16 int on the stack.</span>
+    <span class="kt">int</span> <span class="n">some_array</span><span class="p">[</span><span class="mi">16</span><span class="p">];</span>
+
+    <span class="c1">// Overflow the array on the stack</span>
+
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">16</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">some_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">good_function</span><span class="p">();</span>
+    <span class="n">bad_function</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A small makefile enable to compile it:</p>
+<div class="highlight-makefile"><div class="highlight"><pre><span class="nv">TOOLCHAIN</span>       <span class="o">=</span> ~/workspace/xu3/buildroot/output/host/opt/ext-toolchain/bin
+<span class="nv">CROSS_COMPILE</span>   <span class="o">=</span> arm-linux-gnueabihf-
+<span class="nv">GCC</span>             <span class="o">=</span> <span class="k">$(</span>TOOLCHAIN<span class="k">)</span>/<span class="k">$(</span>CROSS_COMPILE<span class="k">)</span>gcc
+<span class="nv">CFLAGS</span>          <span class="o">=</span> -fstack-protector-all
+
+
+<span class="nf">canary_prog</span><span class="o">:</span> <span class="m">canary_prog.c</span>
+        <span class="k">$(</span>GCC<span class="k">)</span> <span class="k">$(</span>CFLAGS<span class="k">)</span> -o <span class="nv">$@</span> <span class="nv">$&lt;</span>
+</pre></div>
+</div>
+<p>We can copy it to the <em>&#8220;usrfs&#8221;</em> of the SD-Card. After booting the Odroid, we can try to run it:</p>
+<div class="highlight-python"><div class="highlight"><pre># Mount the &quot;usrfs&quot; patition
+$ mount /dev/mmcblk0p2 /mnt
+$ cd /mnt
+$ ./canary_prog
+*** stack smashing detected ***: ./canary_prog terminated
+Aborted
+</pre></div>
+</div>
+<p>by decompiling it and comparing with the same program compiled without the &#8220;-fstack-protector-all&#8221; options, we can see that the following code is added at enter of a function:</p>
+<div class="highlight-python"><div class="highlight"><pre>10496:       f240 6398       movw    r3, #1688       ; 0x698
+1049a:       f2c0 0302       movt    r3, #2
+1049e:       681b            ldr     r3, [r3, #0]
+... Rest of the function.
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="lab3_notes.html" class="btn btn-neutral float-right" title="Lab 3: Kernel configuration" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="lab1_notes.html" class="btn btn-neutral" title="Lab 1: Odoid Buildroot installation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Antoine Zen-Ruffinen, , Yann Maret.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'10.11.2015',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

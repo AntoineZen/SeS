@@ -1,0 +1,985 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Annexes &mdash; SeS 10.11.2015 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="SeS 10.11.2015 documentation" href="index.html"/>
+        <link rel="prev" title="Lab 6: File Systems" href="lab6_filesystems_notes.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SeS
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="lab1_notes.html">Lab 1: Odoid Buildroot installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab2_uboot_notes.html">Lab 2: U-Boot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab3_notes.html">Lab 3: Kernel configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab4_notes.html">Lab 3: Valgrind</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab5_notes.html">Lab 5: Install last version of OpenSSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab6_filesystems_notes.html">Lab 6: File Systems</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Annexes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#base-installation-script">Base installation script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#shifted-bl1-installation-script">Shifted bl1 installation script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#shifted-bl3-installation-script">Shifted bl3 installation script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#shifted-device-tree-installation-script">Shifted Device tree installation script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#shifted-trust-zone-installation-script">Shifted Trust-Zone installation script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#shifted-u-boot-installation-script">Shifted u-boot installation script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#shifted-uimage-installation-script">Shifted uImage installation script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#base-installation-script-with-kenel-and-device-tree-in-part-1">Base installation script with kenel and device tree in part. 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stack-protection-test-program-makefile">Stack protection test program &amp; Makefile</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">SeS</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Annexes</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/annexes.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="annexes">
+<h1>Annexes<a class="headerlink" href="#annexes" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="base-installation-script">
+<h2>Base installation script<a class="headerlink" href="#base-installation-script" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c">#!/bin/bash</span>
+
+<span class="nv">TARGET_VOLUME</span><span class="o">=</span>sdb
+<span class="nv">IMAGEDIR</span><span class="o">=</span><span class="s2">&quot;/home/antoine/workspace/xu3/buildroot/output/images&quot;</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;Target volume is ${TARGET_VOLUME}&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;Image dir is ${IMAGEDIR}&quot;</span>
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+
+<span class="c">#initialize 64MB to 0</span>
+sudo dd <span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>4k <span class="nv">count</span><span class="o">=</span>16384
+sync
+<span class="nb">echo</span> <span class="s2">&quot;First sector: msdos&quot;</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mklabel msdos
+<span class="c"># Create the 1st partition (rootfs), start 64MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 131072s 655359s
+<span class="c"># Create the 2sd partition (usrfs), start 320MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 655360s 1179647s
+<span class="c">#Format ext4 1st and 2sd partition</span>
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1 -L rootfs
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2 -L usrfs
+sync
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+
+sleep 3
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+
+
+<span class="c">#copy firmware &amp; bl1.bin, bl2.bin, tzsw.bin</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy bl1&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl1.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>1
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy  bl2&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl2.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>31
+
+<span class="c">#copy u-boot</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy U-Boot&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/u-boot.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>63
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy trustZone&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-tzsw.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>719
+
+<span class="c">#copy kernel &amp; flattened device tree</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy kernel&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/uImage <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>1263
+
+<span class="nb">echo</span> <span class="s2">&quot;copy device tree&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/exynos5422-odroidxu3.dtb <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>17647
+
+<span class="c">#copy rootfs</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy rootfs&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/rootfs.ext4 <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>131072
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="shifted-bl1-installation-script">
+<h2>Shifted bl1 installation script<a class="headerlink" href="#shifted-bl1-installation-script" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c">#!/bin/bash</span>
+
+<span class="c"># This script install the system on the SDCard, but with all items shifted from one sector.</span>
+<span class="c"># This is to check what appends when bl1 is shifted. All other are shifted also not to</span>
+<span class="c"># overlap.</span>
+
+
+<span class="nv">TARGET_VOLUME</span><span class="o">=</span>sdb
+<span class="nv">IMAGEDIR</span><span class="o">=</span><span class="s2">&quot;/home/antoine/workspace/xu3/buildroot/output/images&quot;</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;Target volume is ${TARGET_VOLUME}&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;Image dir is ${IMAGEDIR}&quot;</span>
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+
+<span class="c">#initialize 64MB to 0</span>
+sudo dd <span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>4k <span class="nv">count</span><span class="o">=</span>16384
+sync
+<span class="nb">echo</span> <span class="s2">&quot;First sector: msdos&quot;</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mklabel msdos
+
+
+
+<span class="c"># Create the 1st partition (rootfs), start 64MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 131072s 655359s
+<span class="c"># Create the 2sd partition (usrfs), start 320MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 655360s 1179647s
+<span class="c">#Format ext4 1st and 2sd partition</span>
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1 -L rootfs
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2 -L usrfs
+sync
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+
+sleep 3
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+
+
+<span class="c">#copy firmware &amp; bl1.bin, bl2.bin, tzsw.bin</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy bl1&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl1.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>2
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy  bl2&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl2.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>32
+
+<span class="c">#copy u-boot</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy U-Boot&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/u-boot.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>64
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy trustZone&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-tzsw.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>720
+
+<span class="c">#copy kernel &amp; flattened device tree</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy kernel&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/uImage <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>1264
+
+<span class="nb">echo</span> <span class="s2">&quot;copy device tree&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/exynos5422-odroidxu3.dtb <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>17648
+
+<span class="c">#copy rootfs</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy rootfs&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/rootfs.ext4 <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>131072
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="shifted-bl3-installation-script">
+<h2>Shifted bl3 installation script<a class="headerlink" href="#shifted-bl3-installation-script" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c">#!/bin/bash</span>
+
+<span class="c"># This script install the system on the SDCard, but with all items shifted from one sector.</span>
+<span class="c"># This is to check what appends when bl2 is shifted. bl1 is at the correct address.</span>
+<span class="c"># All other after bl2 are shifted also not to overlap.</span>
+
+
+<span class="nv">TARGET_VOLUME</span><span class="o">=</span>sdb
+<span class="nv">IMAGEDIR</span><span class="o">=</span><span class="s2">&quot;/home/antoine/workspace/xu3/buildroot/output/images&quot;</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;Target volume is ${TARGET_VOLUME}&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;Image dir is ${IMAGEDIR}&quot;</span>
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+
+<span class="c">#initialize 64MB to 0</span>
+sudo dd <span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>4k <span class="nv">count</span><span class="o">=</span>16384
+sync
+<span class="nb">echo</span> <span class="s2">&quot;First sector: msdos&quot;</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mklabel msdos
+
+
+
+<span class="c"># Create the 1st partition (rootfs), start 64MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 131072s 655359s
+<span class="c"># Create the 2sd partition (usrfs), start 320MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 655360s 1179647s
+<span class="c">#Format ext4 1st and 2sd partition</span>
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1 -L rootfs
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2 -L usrfs
+sync
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+
+sleep 3
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+
+
+<span class="c">#copy firmware &amp; bl1.bin, bl2.bin, tzsw.bin</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy bl1&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl1.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>1
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy  bl2&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl2.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>32
+
+<span class="c">#copy u-boot</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy U-Boot&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/u-boot.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>64
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy trustZone&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-tzsw.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>720
+
+<span class="c">#copy kernel &amp; flattened device tree</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy kernel&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/uImage <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>1264
+
+<span class="nb">echo</span> <span class="s2">&quot;copy device tree&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/exynos5422-odroidxu3.dtb <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>17648
+
+<span class="c">#copy rootfs</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy rootfs&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/rootfs.ext4 <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>131072
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="shifted-device-tree-installation-script">
+<h2>Shifted Device tree installation script<a class="headerlink" href="#shifted-device-tree-installation-script" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c">#!/bin/bash</span>
+
+<span class="c"># This script install the system on the SDCard, but with all items shifted from one sector.</span>
+<span class="c"># This is to check what appends when u-the kernel immage is shifted. bl1, bl2, u-boot and the</span>
+<span class="c"># &quot;TrustZone&quot; are at the correct address.</span>
+<span class="c"># All other after bl2 are shifted also not to overlap.</span>
+
+<span class="nv">TARGET_VOLUME</span><span class="o">=</span>sdb
+<span class="nv">IMAGEDIR</span><span class="o">=</span><span class="s2">&quot;/home/antoine/workspace/xu3/buildroot/output/images&quot;</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;Target volume is ${TARGET_VOLUME}&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;Image dir is ${IMAGEDIR}&quot;</span>
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+
+<span class="c">#initialize 64MB to 0</span>
+sudo dd <span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>4k <span class="nv">count</span><span class="o">=</span>16384
+sync
+<span class="nb">echo</span> <span class="s2">&quot;First sector: msdos&quot;</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mklabel msdos
+
+
+
+<span class="c"># Create the 1st partition (rootfs), start 64MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 131072s 655359s
+<span class="c"># Create the 2sd partition (usrfs), start 320MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 655360s 1179647s
+<span class="c">#Format ext4 1st and 2sd partition</span>
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1 -L rootfs
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2 -L usrfs
+sync
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+
+sleep 3
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+
+
+<span class="c">#copy firmware &amp; bl1.bin, bl2.bin, tzsw.bin</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy bl1&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl1.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>1
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy  bl2&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl2.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>31
+
+<span class="c">#copy u-boot</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy U-Boot&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/u-boot.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>63
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy trustZone&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-tzsw.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>719
+
+<span class="c">#copy kernel &amp; flattened device tree</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy kernel&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/uImage <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>1263
+
+<span class="nb">echo</span> <span class="s2">&quot;copy device tree&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/exynos5422-odroidxu3.dtb <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>17648
+
+<span class="c">#copy rootfs</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy rootfs&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/rootfs.ext4 <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>131072
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="shifted-trust-zone-installation-script">
+<h2>Shifted Trust-Zone installation script<a class="headerlink" href="#shifted-trust-zone-installation-script" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c">#!/bin/bash</span>
+
+<span class="c"># This script install the system on the SDCard, but with all items shifted from one sector.</span>
+<span class="c"># This is to check what appends when the &quot;TrustZone&quot; is shifted. bl1, bl2 and uboot are at the correct address.</span>
+<span class="c"># All other after bl2 are shifted also not to overlap.</span>
+
+<span class="nv">TARGET_VOLUME</span><span class="o">=</span>sdb
+<span class="nv">IMAGEDIR</span><span class="o">=</span><span class="s2">&quot;/home/antoine/workspace/xu3/buildroot/output/images&quot;</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;Target volume is ${TARGET_VOLUME}&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;Image dir is ${IMAGEDIR}&quot;</span>
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+
+<span class="c">#initialize 64MB to 0</span>
+sudo dd <span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>4k <span class="nv">count</span><span class="o">=</span>16384
+sync
+<span class="nb">echo</span> <span class="s2">&quot;First sector: msdos&quot;</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mklabel msdos
+
+
+
+<span class="c"># Create the 1st partition (rootfs), start 64MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 131072s 655359s
+<span class="c"># Create the 2sd partition (usrfs), start 320MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 655360s 1179647s
+<span class="c">#Format ext4 1st and 2sd partition</span>
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1 -L rootfs
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2 -L usrfs
+sync
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+
+sleep 3
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+
+
+<span class="c">#copy firmware &amp; bl1.bin, bl2.bin, tzsw.bin</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy bl1&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl1.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>1
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy  bl2&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl2.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>31
+
+<span class="c">#copy u-boot</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy U-Boot&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/u-boot.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>63
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy trustZone&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-tzsw.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>720
+
+<span class="c">#copy kernel &amp; flattened device tree</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy kernel&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/uImage <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>1264
+
+<span class="nb">echo</span> <span class="s2">&quot;copy device tree&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/exynos5422-odroidxu3.dtb <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>17648
+
+<span class="c">#copy rootfs</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy rootfs&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/rootfs.ext4 <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>131072
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="shifted-u-boot-installation-script">
+<h2>Shifted u-boot installation script<a class="headerlink" href="#shifted-u-boot-installation-script" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c">#!/bin/bash</span>
+
+<span class="c"># This script install the system on the SDCard, but with all items shifted from one sector.</span>
+<span class="c"># This is to check what appends when u-boot is shifted. bl1 and bl2 are at the correct address.</span>
+<span class="c"># All other after bl2 are shifted also not to overlap.</span>
+
+<span class="nv">TARGET_VOLUME</span><span class="o">=</span>sdb
+<span class="nv">IMAGEDIR</span><span class="o">=</span><span class="s2">&quot;/home/antoine/workspace/xu3/buildroot/output/images&quot;</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;Target volume is ${TARGET_VOLUME}&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;Image dir is ${IMAGEDIR}&quot;</span>
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+
+<span class="c">#initialize 64MB to 0</span>
+sudo dd <span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>4k <span class="nv">count</span><span class="o">=</span>16384
+sync
+<span class="nb">echo</span> <span class="s2">&quot;First sector: msdos&quot;</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mklabel msdos
+
+
+
+<span class="c"># Create the 1st partition (rootfs), start 64MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 131072s 655359s
+<span class="c"># Create the 2sd partition (usrfs), start 320MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 655360s 1179647s
+<span class="c">#Format ext4 1st and 2sd partition</span>
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1 -L rootfs
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2 -L usrfs
+sync
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+
+sleep 3
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+
+
+<span class="c">#copy firmware &amp; bl1.bin, bl2.bin, tzsw.bin</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy bl1&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl1.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>1
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy  bl2&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl2.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>31
+
+<span class="c">#copy u-boot</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy U-Boot&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/u-boot.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>64
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy trustZone&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-tzsw.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>720
+
+<span class="c">#copy kernel &amp; flattened device tree</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy kernel&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/uImage <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>1264
+
+<span class="nb">echo</span> <span class="s2">&quot;copy device tree&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/exynos5422-odroidxu3.dtb <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>17648
+
+<span class="c">#copy rootfs</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy rootfs&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/rootfs.ext4 <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>131072
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="shifted-uimage-installation-script">
+<h2>Shifted uImage installation script<a class="headerlink" href="#shifted-uimage-installation-script" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c">#!/bin/bash</span>
+
+<span class="c"># This script install the system on the SDCard, but with all items shifted from one sector.</span>
+<span class="c"># This is to check what appends when u-the kernel immage is shifted. bl1, bl2, u-boot and the</span>
+<span class="c"># &quot;TrustZone&quot; are at the correct address.</span>
+<span class="c"># All other after bl2 are shifted also not to overlap.</span>
+
+<span class="nv">TARGET_VOLUME</span><span class="o">=</span>sdb
+<span class="nv">IMAGEDIR</span><span class="o">=</span><span class="s2">&quot;/home/antoine/workspace/xu3/buildroot/output/images&quot;</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;Target volume is ${TARGET_VOLUME}&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;Image dir is ${IMAGEDIR}&quot;</span>
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+
+<span class="c">#initialize 64MB to 0</span>
+sudo dd <span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>4k <span class="nv">count</span><span class="o">=</span>16384
+sync
+<span class="nb">echo</span> <span class="s2">&quot;First sector: msdos&quot;</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mklabel msdos
+
+
+
+<span class="c"># Create the 1st partition (rootfs), start 64MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 131072s 655359s
+<span class="c"># Create the 2sd partition (usrfs), start 320MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 655360s 1179647s
+<span class="c">#Format ext4 1st and 2sd partition</span>
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1 -L rootfs
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2 -L usrfs
+sync
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+
+sleep 3
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+
+
+<span class="c">#copy firmware &amp; bl1.bin, bl2.bin, tzsw.bin</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy bl1&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl1.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>1
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy  bl2&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl2.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>31
+
+<span class="c">#copy u-boot</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy U-Boot&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/u-boot.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>63
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy trustZone&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-tzsw.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>719
+
+<span class="c">#copy kernel &amp; flattened device tree</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy kernel&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/uImage <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>1264
+
+<span class="nb">echo</span> <span class="s2">&quot;copy device tree&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/exynos5422-odroidxu3.dtb <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>17648
+
+<span class="c">#copy rootfs</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy rootfs&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/rootfs.ext4 <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>131072
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="base-installation-script-with-kenel-and-device-tree-in-part-1">
+<h2>Base installation script with kenel and device tree in part. 1<a class="headerlink" href="#base-installation-script-with-kenel-and-device-tree-in-part-1" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c">#!/bin/bash</span>
+
+<span class="nv">TARGET_VOLUME</span><span class="o">=</span>sdb
+<span class="nv">IMAGEDIR</span><span class="o">=</span><span class="s2">&quot;/home/antoine/workspace/xu3/buildroot/output/images&quot;</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;Target volume is ${TARGET_VOLUME}&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;Image dir is ${IMAGEDIR}&quot;</span>
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}3&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>3
+<span class="k">fi</span>
+
+<span class="c">#initialize the fist sector to zero, to erase the patition table</span>
+sudo dd <span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">count</span><span class="o">=</span>1
+sync
+
+<span class="nb">echo</span> <span class="s2">&quot;First sector: msdos&quot;</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mklabel msdos
+
+<span class="c"># Create the 1st partition (bootfs), start 16MB, length 64MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 32768s 163839s
+<span class="c"># Create the 2nt partition (rootfs), start 80MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 163840s 688127s
+<span class="c"># Create the 3rd partition (usrfs), start 336MB, length 256MB</span>
+sudo parted /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> mkpart primary ext4 688128s 1212415s
+
+<span class="c">#Format ext4 1st, 2nd and 3rd partition</span>
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1 -L bootfs
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2 -L rootfs
+sudo mkfs.ext4 /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>3 -L usrfs
+sync
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> 
+
+sleep 3
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}1&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}2&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>2
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> -e <span class="s2">&quot;/dev/${TARGET_VOLUME}3&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+<span class="k">	</span>umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>3
+<span class="k">fi</span>
+
+
+<span class="c">#copy firmware &amp; bl1.bin, bl2.bin, tzsw.bin</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy bl1&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl1.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>1
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy  bl2&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-bl2.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>31
+
+<span class="c">#copy u-boot</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy U-Boot&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/u-boot.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>63
+
+<span class="nb">echo</span> <span class="s2">&quot;Copy trustZone&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/xu3-tzsw.bin <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>719
+
+<span class="c">#copy rootfs</span>
+<span class="nb">echo</span> <span class="s2">&quot;Copy rootfs&quot;</span>
+sudo dd <span class="k">if</span><span class="o">=</span><span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/rootfs.ext4 <span class="nv">of</span><span class="o">=</span>/dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span> <span class="nv">bs</span><span class="o">=</span>512 <span class="nv">seek</span><span class="o">=</span>163840
+
+<span class="c">#copy kernel &amp; flattened device tree</span>
+sudo mount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1 /mnt
+<span class="nb">echo</span> <span class="s2">&quot;Copy kernel&quot;</span>
+sudo cp <span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/uImage /mnt/
+
+<span class="nb">echo</span> <span class="s2">&quot;copy device tree&quot;</span>
+sudo cp <span class="k">${</span><span class="nv">IMAGEDIR</span><span class="k">}</span>/exynos5422-odroidxu3.dtb /mnt/
+
+sudo umount /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>1
+
+<span class="c"># Show patition table</span>
+<span class="nb">echo</span> <span class="s2">&quot;Patition table is&quot;</span>
+sudo fdisk -l /dev/<span class="k">${</span><span class="nv">TARGET_VOLUME</span><span class="k">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="stack-protection-test-program-makefile">
+<h2>Stack protection test program &amp; Makefile<a class="headerlink" href="#stack-protection-test-program-makefile" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-c"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">bad_function</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="c1">// Decalre an array of 16 int on the stack.</span>
+    <span class="kt">int</span> <span class="n">some_array</span><span class="p">[</span><span class="mi">16</span><span class="p">];</span>
+
+    <span class="c1">// Overflow the array on the stack</span>
+
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">24</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">some_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="p">}</span>   
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">good_function</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="c1">// Decalre an array of 16 int on the stack.</span>
+    <span class="kt">int</span> <span class="n">some_array</span><span class="p">[</span><span class="mi">16</span><span class="p">];</span>
+
+    <span class="c1">// Overflow the array on the stack</span>
+
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">16</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">some_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+    <span class="p">}</span>   
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">good_function</span><span class="p">();</span>
+    <span class="n">bad_function</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-makefile"><div class="highlight"><pre><span class="nv">TOOLCHAIN</span>       <span class="o">=</span> ~/workspace/xu3/buildroot/output/host/opt/ext-toolchain/bin
+<span class="nv">CROSS_COMPILE</span>   <span class="o">=</span> arm-linux-gnueabihf-
+<span class="nv">GCC</span>             <span class="o">=</span> <span class="k">$(</span>TOOLCHAIN<span class="k">)</span>/<span class="k">$(</span>CROSS_COMPILE<span class="k">)</span>gcc
+<span class="nv">OBJDUMP</span>         <span class="o">=</span> <span class="k">$(</span>TOOLCHAIN<span class="k">)</span>/<span class="k">$(</span>CROSS_COMPILE<span class="k">)</span>objdump
+<span class="nv">CFLAGS</span>          <span class="o">=</span> -fstack-protector-all
+
+
+<span class="nf">all</span><span class="o">:</span> <span class="m">decompile_canary decompile_normal</span>
+<span class="nf">normal_prog</span><span class="o">:</span> <span class="m">canary_prog.c</span>
+	<span class="k">$(</span>GCC<span class="k">)</span> -o <span class="nv">$@</span> <span class="nv">$&lt;</span>
+
+<span class="nf">canary_prog</span><span class="o">:</span> <span class="m">canary_prog.c</span>
+	<span class="k">$(</span>GCC<span class="k">)</span> <span class="k">$(</span>CFLAGS<span class="k">)</span> -o <span class="nv">$@</span> <span class="nv">$&lt;</span>
+
+
+<span class="nf">decompile_canary</span><span class="o">:</span> <span class="m">canary_prog</span>
+	<span class="k">$(</span>OBJDUMP<span class="k">)</span> -d <span class="nv">$&lt;</span> &gt; canary_prog.txt 
+
+<span class="nf">decompile_normal</span><span class="o">:</span> <span class="m">normal_prog</span>
+	<span class="k">$(</span>OBJDUMP<span class="k">)</span> -d <span class="nv">$&lt;</span> &gt; normal_prog.txt 
+
+
+
+    
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="lab6_filesystems_notes.html" class="btn btn-neutral" title="Lab 6: File Systems" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Antoine Zen-Ruffinen, , Yann Maret.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'10.11.2015',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

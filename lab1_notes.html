@@ -1,0 +1,265 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Lab 1: Odoid Buildroot installation &mdash; SeS 10.11.2015 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="SeS 10.11.2015 documentation" href="index.html"/>
+        <link rel="next" title="Lab 2: U-Boot" href="lab2_uboot_notes.html"/>
+        <link rel="prev" title="SeS’s reports" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SeS
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Lab 1: Odoid Buildroot installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab2_uboot_notes.html">Lab 2: U-Boot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab3_notes.html">Lab 3: Kernel configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab4_notes.html">Lab 3: Valgrind</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab5_notes.html">Lab 5: Install last version of OpenSSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab6_filesystems_notes.html">Lab 6: File Systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexes.html">Annexes</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">SeS</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Lab 1: Odoid Buildroot installation</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/lab1_notes.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="lab-1-odoid-buildroot-installation">
+<h1>Lab 1: Odoid Buildroot installation<a class="headerlink" href="#lab-1-odoid-buildroot-installation" title="Permalink to this headline">¶</a></h1>
+<p>The setup of the <em>buildroot</em> project should be straight forward as given in the laboratory handout:</p>
+<div class="highlight-python"><div class="highlight"><pre># Create a dir to work in
+
+$ mkdir ~/workspace
+$ cd ~/workspace
+
+# Checkout the required resources
+$ git clone -o upstream https://forge.tic.eia-fr.ch/git/es4-1415/xu3.git
+$ cd ~/workspace/xu3
+$ git  clone git://git.buildroot.net/buildroot
+$ cd buildroot git  checkout -b xu3 2014.11
+
+# Patch what is required for the lab to work
+$ patch -p1 &lt; ~/workspace/xu3/scripts/config/buildroot-xu3.patch
+
+# Install root-fs creation script
+$ cp  ~/workspace/xu3/scripts/config/rootfs-ext.tar  board/hardkernel/xu3
+$ chmod +x board/hardkernel/xu3/post_image_creation.sh
+$ chmod +x board/hardkernel/xu3/pre_image_creation.sh
+
+# Build the images
+$ make odroidxu3_defconfig
+$ make
+</pre></div>
+</div>
+<p>Unfortunately, this does not work on my machine. <em>Make</em> gives the following error:</p>
+<div class="highlight-python"><div class="highlight"><pre>Cannot execute cross-compiler &#39;/home/antoine/workspace/xu3/buildroot/output/host/opt/ext-toolchain/bin/arm-linux-gnueabihf-gcc&#39;
+make: *** [/home/antoine/workspace/xu3/buildroot/output/build/toolchain-external-undefined/.stamp_configured] Error 1
+</pre></div>
+</div>
+<p>if we try to call the compiler by hand, the error is then the following:</p>
+<div class="highlight-python"><div class="highlight"><pre>antoine@antoine-vb-64:~/workspace/xu3/buildroot/output/host/opt/ext-toolchain/bin$ ./arm-linux-gnueabihf-gcc
+./arm-linux-gnueabihf-gcc: error while loading shared libraries: libstdc++.so.6: cannot open shared object file: No such file or directory
+</pre></div>
+</div>
+<p>if we look for the shared libraries above, we can see that it is included in the following places, so there is no reason for gcc no to find id:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo find / -name libstdc++.so.6
+[sudo] password for antoine:
+/home/antoine/workspace/xu3/buildroot/output/host/opt/ext-toolchain/arm-linux-gnueabihf/lib/libstdc++.so.6
+/usr/lib/x86_64-linux-gnu/libstdc++.so.6
+</pre></div>
+</div>
+<p>Looking at the given GCC, it appears to be 32 bits executable:</p>
+<div class="highlight-python"><div class="highlight"><pre>antoine@antoine-vb-64:~/workspace/xu3/buildroot/output/host/opt/ext-toolchain/bin$ file arm-linux-gnueabihf-gcc-4.9.2
+arm-linux-gnueabihf-gcc-4.9.2: ELF 32-bit LSB  executable, Intel 80386, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.15, stripped
+</pre></div>
+</div>
+<p>My machine is 64 bits:</p>
+<div class="highlight-python"><div class="highlight"><pre>antoine@antoine-vb-64:~$ uname -a
+Linux antoine-vb-64 3.16.0-49-generic #65~14.04.1-Ubuntu SMP Wed Sep 9 10:03:23 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+</pre></div>
+</div>
+<p>So to solve this, we need to install the following 32 bits libraries:a</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo apt-get install lib32stdc++6 zlib1g:i386
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="lab2_uboot_notes.html" class="btn btn-neutral float-right" title="Lab 2: U-Boot" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="SeS’s reports" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Antoine Zen-Ruffinen, , Yann Maret.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'10.11.2015',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
